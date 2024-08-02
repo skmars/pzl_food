@@ -1,0 +1,29 @@
+dynaconf_merge: true
+default:
+  NAME: pzl_food
+  HOST: 0.0.0.0
+  PORT: 8011
+  WORKERS: 4
+  CORS_ORIGINS: ["*"]
+
+  DEBUG: false
+  RELOADED: false
+
+  POSTGRES:
+    is_bouncer: false
+    driver: postgresql+asyncpg
+    host: postgres
+    port: 5432
+    user: postgres
+    password: "**"
+    database: pzl_food
+    echo: false
+    ssl: false
+    pool_pre_ping: true
+    pool_recycle: 3000
+
+  VALIDATION:
+    food:
+      food_description_limit: 100 # символов
+      food_low_price_limit: 1 # рубль
+

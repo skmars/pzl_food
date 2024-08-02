@@ -1,0 +1,69 @@
+---
+image: $BUILDER_IMAGE
+
+variables:
+  project: "pzl_food"
+
+
+lint:
+  variables:
+    project: "app"
+  extends: .python_lint
+  allow_failure: false
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - "**/*.py"
+
+pylint:
+  variables:
+    project: "app"
+  extends: .pylint
+  allow_failure: false
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - "**/*.py"
+
+isort:
+  variables:
+    project: "app"
+  extends: .python_isort
+  allow_failure: false
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - "**/*.py"
+
+black:
+  variables:
+    project: "app"
+  extends: .python_black
+  allow_failure: false
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - "**/*.py"
+
+sonar:
+  extends: .sonarqube
+  allow_failure: true
+
+pytest:
+  extends: .pytest
+  allow_failure: true
+  script:
+    - poetry run coverage run --concurrency=thread --source=. -m pytest tests --junitxml=report.xml
+    - poetry run coverage xml -i
+    - poetry run coverage report
+    - poetry run genbadge tests -i - < report.xml -o - > badge.svg
+
+make_dist:
+  needs: ["set_version"]
+  extends: .dist_make_poetry
+
+
